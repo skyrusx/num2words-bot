@@ -55,7 +55,7 @@ bundle install
 Создай файл `.env`:
 
 ```dotenv
-TELEGRAM_BOT_TOKEN=твой_токен_от_BotFather
+TELEGRAM_BOT_TOKEN=your_token_here
 ```
 
 Запуск:
