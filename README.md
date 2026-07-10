@@ -1,58 +1,72 @@
-# 🤖 Num2Words Bot
+# Num2Words Bot
 
-**Num2Words Bot** — это Telegram-бот, который переводит числа в слова и суммы в валюту.  
-Основан на [num2words](https://github.com/skyrusx/num2words) ruby gem.
+Telegram-бот для преобразования чисел, дробей, денежных сумм, дат и времени в слова.
+Работает на базе Ruby-гема `num2words`.
 
----
+## Возможности
 
-## ✨ Возможности
+- Числа: `123`, `-42`, `007`
+- Дроби: `45.67`, `45,67`
+- Валюты: `21.05 USD`, `USD 21.05`, `21,05 RUB`
+- Даты: `2024-08-21`, `21.08.2024`
+- Время: `14:35`, `14:35:42`
+- Дата и время: `2024-08-21 14:35:42`, `2024-08-21T14:35:42`
+- Все локали из `Num2words.available_locales`
+- Все валюты из `Num2words.available_currencies(locale)`
+- Настройки регистра, дробей, падежа даты, краткого времени и вывода младшей денежной единицы
+- Inline mode для быстрых преобразований в других чатах
 
-- 🔢 Перевод чисел в слова  
-  `123 → сто двадцать три`
+## Примеры
 
-- 💵 Суммы в валюте  
-  `9876.5 → девять тысяч восемьсот семьдесят шесть рублей пятьдесят копеек`
-
-- 🌍 Поддержка разных языков (ru, en, fr, …)
-
-- ⚙️ Лёгкая интеграция в ваши проекты на Ruby и Rails
-
----
-
-## 🚀 Как пользоваться
-
-Найди бота в Telegram 👉 [@num2words_bot](https://t.me/num2words_bot)  
-И отправь любое число:
-
-```
+```text
 123
+сорок пять целых шестьдесят семь сотых
+21.05 USD
+2024-08-21
+14:35:42
 ```
 
-Бот ответит:
+Бот по умолчанию работает в режиме `auto` и сам распознает тип ввода.
 
+## Команды
+
+```text
+/start
+/help
+/settings
+/lang ru
+/currency USD
+/mode auto|number|currency|date|time|datetime
+/case default|upper|downcase|capitalize|title
+/minor always|nonzero|never
+/short on|off
+/style fraction|decimal
+/joiner default|and
+/datecase default|genitive
+/locales
+/currencies
+/reset
 ```
-🔢 123 → ✍️ сто двадцать три
-```
 
----
+## Настройки
 
-## 🛠 Технологии
+- `locale` - язык результата.
+- `mode` - режим распознавания: авто, число, валюта, дата, время, дата-время.
+- `currency` - валюта по умолчанию для режима `currency`.
+- `word_case` - регистр результата.
+- `fraction_style` - стиль дробей.
+- `joiner` - соединитель дробной части.
+- `date_case` - падеж даты.
+- `short` - краткий формат времени.
+- `minor` - вывод младшей денежной единицы.
 
-- [Ruby](https://www.ruby-lang.org/)
-- [telegram-bot-ruby](https://github.com/atipugin/telegram-bot-ruby)
-- [num2words](https://github.com/skyrusx/num2words)
-
----
-
-## 📦 Локальный запуск
+## Локальный запуск
 
 ```bash
-git clone https://github.com/skyrusx/num2words-bot.git
-cd num2words-bot
 bundle install
 ```
 
-Создай файл `.env`:
+Создай `.env`:
 
 ```dotenv
 TELEGRAM_BOT_TOKEN=your_token_here
@@ -61,21 +75,28 @@ TELEGRAM_BOT_TOKEN=your_token_here
 Запуск:
 
 ```bash
-ruby bot.rb
+bundle exec ruby bot.rb
 ```
 
----
+Проверка версии `num2words`:
 
-## 📝 Примеры
-
-```
-/start → Привет! Я перевожу числа в слова и валюту. Введи число 👇
-123.5 → сто двадцать три целых пять десятых
-45.20 (режим валюта) → forty five dollars twenty cents
+```bash
+bundle exec ruby -e 'require "num2words"; puts Num2words::VERSION'
 ```
 
----
+Ожидаемая версия:
 
-## 📜 Лицензия
+```text
+0.5.0
+```
+
+## Технологии
+
+- Ruby 2.7.1
+- telegram-bot-ruby
+- num2words `~> 0.5.0`
+- dotenv
+
+## Лицензия
 
 [MIT](LICENSE)
