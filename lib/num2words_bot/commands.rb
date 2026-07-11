@@ -15,9 +15,11 @@ module Num2wordsBot
 
       case command
       when '/start'
-        "Привет! Я бот для num2words #{Num2words::VERSION}.\n\n#{Presenter.help_text}"
+        Presenter.start_text
       when '/help'
         Presenter.help_text
+      when '/commands'
+        Presenter.commands_text
       when '/settings'
         Presenter.settings_text(settings)
       when '/locales'
@@ -26,7 +28,7 @@ module Num2wordsBot
         currencies_text(settings)
       when '/reset'
         SettingsFactory.reset!(settings)
-        "Настройки сброшены.\n\n#{Presenter.settings_text(settings)}"
+        'Настройки сброшены.'
       when '/lang'
         update_locale(arg, settings)
       when '/currency'
@@ -36,7 +38,7 @@ module Num2wordsBot
       when '/case'
         update_enum(arg, settings, :word_case, WORD_CASES, 'регистр')
       when '/minor'
-        update_enum(arg, settings, :minor, MINOR_MODES, 'режим')
+        update_enum(arg, settings, :minor, MINOR_MODES, 'копейки/центы')
       when '/short'
         update_short(arg, settings)
       when '/style'
@@ -57,18 +59,18 @@ module Num2wordsBot
     end
 
     def update_locale(arg, settings)
-      return "Укажи язык. Пример: /lang en\n\n/locales покажет весь список." if arg.empty?
+      return Presenter.command_options_text(:lang) if arg.empty?
 
       locale = Utils.normalize_symbol(arg)
       return "Язык #{arg} не поддерживается.\n\n/locales покажет доступные языки." unless Utils.supported_locale?(locale)
 
       settings.locale = locale
       settings.currency = Num2words.default_currency(locale) unless Utils.supported_currency?(locale, settings.currency)
-      "Язык изменен на #{locale.upcase}.\n\n#{Presenter.settings_text(settings)}"
+      "Язык: #{locale.upcase}"
     end
 
     def update_currency(arg, settings)
-      return "Укажи валюту. Пример: /currency USD\n\n/currencies покажет список." if arg.empty?
+      return Presenter.command_options_text(:currency) if arg.empty?
 
       currency = Utils.normalize_currency(arg)
       unless Utils.supported_currency?(settings.locale, currency)
@@ -76,21 +78,21 @@ module Num2wordsBot
       end
 
       settings.currency = currency
-      "Валюта изменена на #{Utils.currency_label(settings.locale, currency)}."
+      "Валюта: #{Utils.currency_label(settings.locale, currency)}"
     end
 
     def update_enum(arg, settings, attribute, allowed_values, label)
-      return "Укажи #{label}: #{Utils.list_values(allowed_values)}" if arg.empty?
+      return Presenter.command_options_text(attribute_label_group(attribute)) if arg.empty?
 
       value = Utils.normalize_symbol(arg)
       return "Неизвестное значение #{arg}. Доступно: #{Utils.list_values(allowed_values)}" unless allowed_values.include?(value)
 
       settings[attribute] = value
-      "#{label.capitalize} изменен на #{value}."
+      "#{label.capitalize}: #{Presenter.label(attribute_label_group(attribute), value)}"
     end
 
     def update_short(arg, settings)
-      return 'Укажи /short on или /short off.' if arg.empty?
+      return "Краткое время:\n\n/short on - не показывать секунды\n/short off - показывать полное время" if arg.empty?
 
       if Utils.on_value?(arg)
         settings.short = true
@@ -100,7 +102,18 @@ module Num2wordsBot
         return "Не понял значение #{arg}. Используй /short on или /short off."
       end
 
-      "Краткий формат: #{settings.short ? 'on' : 'off'}."
+      "Кратко: #{Presenter.label(:boolean, settings.short)}"
+    end
+
+    def attribute_label_group(attribute)
+      {
+        mode: :mode,
+        word_case: :word_case,
+        minor: :minor,
+        fraction_style: :fraction_style,
+        joiner: :joiner,
+        date_case: :date_case
+      }.fetch(attribute)
     end
   end
 end

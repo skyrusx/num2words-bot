@@ -18,7 +18,7 @@ module Num2wordsBot
       abort 'TELEGRAM_BOT_TOKEN is not set' if @token.to_s.empty?
 
       Telegram::Bot::Client.run(@token) do |bot|
-        puts "Бот num2words #{Num2words::VERSION} запущен"
+        puts "Бот Num2Words запущен"
 
         bot.listen do |message|
           handle_update(bot, message)
